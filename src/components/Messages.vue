@@ -14,7 +14,7 @@
       <div class="message__right">
         <h4 class="message__name">{{ user.name }}</h4>
         <p class="message__content">
-          {{ user.metadata.rawMetadata || "Hello I'm using tinder!" }}
+          {{ "Hello I'm using datemalta!" }}
         </p>
       </div>
     </router-link>

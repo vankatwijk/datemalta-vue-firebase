@@ -1,6 +1,6 @@
 <template>
-  <div class="tinder__card">
-    <div class="tinder__card__container">
+  <div class="datemalta__card">
+    <div class="datemalta__card__container">
       <vue-swing
         v-for="user in users"
         :key="user.id"
@@ -75,7 +75,7 @@ import StarOutlineIcon from "vue-material-design-icons/StarOutline.vue";
 import HeartIcon from "vue-material-design-icons/Heart.vue";
 import HeartOutlineIcon from "vue-material-design-icons/HeartOutline.vue";
 export default {
-  name: "tinder-cards",
+  name: "datemalta-cards",
   props: {
     users: {
       type: [Object, Array],
@@ -214,7 +214,7 @@ export default {
   background-position: center;
 }
 
-.tinder__card__container {
+.datemalta__card__container {
   display: flex;
   justify-content: center;
   margin-top: 10vh;

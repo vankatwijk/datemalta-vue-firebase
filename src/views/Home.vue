@@ -3,7 +3,7 @@
     <div class="content-wrapper">
       <div class="content">
         <MainHeader />
-        <TinderCards :uid="uid" :users="swipables" />
+        <DateMaltaCards :uid="uid" :users="swipables" />
       </div>
     </div>
     <SideBar />
@@ -14,7 +14,7 @@
 import { auth } from "../firebase";
 import { CometChat } from "@cometchat-pro/chat";
 import MainHeader from "../shared/MainHeader";
-import TinderCards from "../components/TinderCards";
+import DateMaltaCards from "../components/DateMaltaCards";
 import SideBar from "../shared/SideBar";
 export default {
   name: "home",
@@ -50,7 +50,7 @@ export default {
   },
   components: {
     MainHeader,
-    TinderCards,
+    DateMaltaCards,
     SideBar,
   },
 };
