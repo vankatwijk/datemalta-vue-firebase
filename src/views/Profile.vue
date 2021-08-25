@@ -1,16 +1,23 @@
 <template>
   <div class="login__box">
     <h2>Profile</h2>
-    <form @submit.prevent="onSubmit">
+    <form @submit.prevent="onSubmit" enctype="multipart/form-data">
       <div class="user__box">
         <input type="text" required minlength="6" v-model="form.fullname" />
         <label>Fullname</label>
       </div>
-
+      <div v-if="previewImage">   
+        <img :src="previewImage" width="100%" style="padding-bottom:20px;" class="uploading-image" />
+      </div>
       <div class="user__box">
+        <input type="file" ref="profileimg" accept="image/*" @change="uploadImage($event)" id="file-input">
+        <label>Profile image</label>
+      </div>
+
+      <!-- <div class="user__box">
         <input type="text" required minlength="10" v-model="form.avatar" />
         <label>Image URL</label>
-      </div>
+      </div> -->
 
       <div class="user__box">
         <input
@@ -51,17 +58,20 @@
 
 <script>
 import { CometChat } from "@cometchat-pro/chat";
-import { auth } from "../firebase";
+import { auth,fbstorageRef } from "../firebase";
 export default {
   name: "profile-update",
   data() {
     return {
       requesting: false,
+      previewImage:null,
       form: {
         fullname: "",
         avatar: "",
         age: "",
         metadata: "",
+        profileImg:"",
+        imageData:''
       },
     };
   },
@@ -70,14 +80,39 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.requesting = true;
-      auth.currentUser
-        .updateProfile({
-          photoURL: this.form.avatar,
-          displayName: this.form.fullname,
-        })
-        .then(() => this.setUser())
-        .catch((error) => console.log("Error updating user:", error))
+
+      //upload the user first
+      this.profileImg=null;
+
+      console.log("uiduiduid",auth.currentUser.uid)
+      console.log("previewImage33232322",this.imageData)
+      const storageRef=fbstorageRef.ref(`${auth.currentUser.uid}`).put(this.imageData);
+      storageRef.on(`state_changed`,
+      snapshot=>{
+      this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes)*100;
+      }, 
+      error=>{console.log(error.message)},
+      ()=>{
+        this.uploadValue=100;
+        storageRef.snapshot.ref.getDownloadURL().then((url)=>{
+            this.form.avatar = url;
+            console.log("previewImage",this.imageData)
+          }).then(() => {
+
+            //update the user
+            this.requesting = true;
+            auth.currentUser
+              .updateProfile({
+                photoURL: this.form.avatar,
+                displayName: this.form.fullname,
+              })
+              .then(() => this.setUser())
+              .catch((error) => console.log("Error updating user:", error))
+                });
+        }      
+      );
+
+
     },
     getUser() {
       const uid = auth.currentUser.uid;
@@ -108,6 +143,16 @@ export default {
       .catch((error) => console.log(error))
       .finally(() => this.requesting = false);
     },
+    uploadImage(e){
+        const image = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(image);
+        reader.onload = e =>{
+            this.previewImage = e.target.result;
+            console.log(this.previewImage);
+        };
+        this.imageData = e.target.files[0];
+    }
   },
 };
 </script>
